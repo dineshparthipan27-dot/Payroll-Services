@@ -1067,9 +1067,7 @@
 
 
 
-/* ==========================================
-   7. FINAL CTA SECTION (Premium Dark Banner)
-========================================== */
+  
 .contact-cta-section {
     padding: 60px 20px 120px 20px;
     background-color: #f8fafc;  
@@ -1155,9 +1153,7 @@
     line-height: 1.7;
 }
 
-/* ==========================================
-   PREMIUM ANIMATED BUTTONS
-========================================== */
+  
 .cta-btn-group-animated {
     display: flex;
     gap: 25px;
@@ -1239,9 +1235,7 @@
 .icon-slide { transition: transform 0.4s ease; }
 .outline-sweep-btn:hover .icon-slide { transform: translateX(6px); }
 
-/* ==========================================
-   MOBILE RESPONSIVENESS
-========================================== */
+  
 @media screen and (max-width: 768px) {
     .cta-premium-banner {
         padding: 60px 25px;
