@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PayrollPro - Employee Portal</title>
+
+     
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+     
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* ==========================================
+           EMPLOYEE PORTAL THEME (Teal & Deep Blue)
+        ========================================== */
+        :root {
+            --primary-blue: #0f172a;
+            --primary-teal: #2dd4bf;
+            --teal-hover: #14b8a6;
+            --teal-light: rgba(45, 212, 191, 0.12);
+
+            --bg-color: #f1f5f9;
+             
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+
+            --sidebar-bg: #ffffff;
+             
+            --sidebar-text: #475569;
+            --sidebar-hover: #f8fafc;
+            --sidebar-active-bg: rgba(45, 212, 191, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+            width: 100%;
+        }
+
+        /* ==========================================
+           SIDEBAR STYLES (Light Theme)
+        ========================================== */
+        .sidebar {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+            position: fixed;
+            height: 100vh;
+            border-right: 1px solid var(--border-color);
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.5);
+            z-index: 999;
+            backdrop-filter: blur(4px);
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        .sidebar-header {
+            padding: 30px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo-da {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--primary-blue);
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-da i {
+            color: var(--primary-teal);
+            font-size: 28px;
+        }
+
+        .close-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--text-dark);
+            cursor: pointer;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 25px 15px;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 16px 20px;
+            color: var(--sidebar-text);
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-bottom: 5px;
+        }
+
+        .menu-link i {
+            font-size: 18px;
+            width: 25px;
+            text-align: center;
+            color: #94a3b8;
+            transition: 0.3s;
+        }
+
+        .menu-link:hover {
+            background-color: var(--sidebar-hover);
+            color: var(--primary-blue);
+            transform: translateX(5px);
+        }
+
+        .menu-link:hover i {
+            color: var(--primary-teal);
+        }
+
+        .menu-link.active {
+            background-color: var(--primary-blue);
+            color: #ffffff;
+            box-shadow: 0 10px 20px rgba(15, 23, 42, 0.15);
+        }
+
+        .menu-link.active i {
+            color: var(--primary-teal);
+        }
+
+        .sidebar-bottom {
+            padding: 20px 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .logout-btn {
+            color: #ef4444;
+        }
+
+        .logout-btn i {
+            color: #ef4444;
+        }
+
+        .logout-btn:hover {
+            background-color: #fef2f2;
+            color: #b91c1c;
+            transform: none;
+        }
+
+        /* ==========================================
+           MAIN CONTENT & HEADER
+        ========================================== */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            margin-left: 280px;
+            min-height: 100vh;
+            width: calc(100% - 280px);
+        }
+
+        .top-header {
+            background-color: var(--bg-color);
+            padding: 25px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 998;
+            backdrop-filter: blur(10px);
+            background: rgba(241, 245, 249, 0.9);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: #ffffff;
+            color: var(--primary-blue);
+            border: 1px solid var(--border-color);
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+        }
+
+        .greeting h1 {
+            font-size: 26px;
+            color: var(--primary-blue);
+            font-weight: 900;
+            letter-spacing: -0.5px;
+        }
+
+        .welcome-name {
+            color: var(--primary-teal);
+            font-weight: 800;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-align: right;
+            background: #fff;
+            padding: 8px 15px 8px 20px;
+            border-radius: 50px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+        }
+
+        .user-role {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: block;
+        }
+
+        .user-email {
+            font-size: 14px;
+            color: var(--primary-blue);
+            font-weight: 800;
+            display: block;
+        }
+
+        .user-avatar img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* ==========================================
+           VIEW SECTIONS & NEW SCROLL ANIMATIONS
+        ========================================== */
+        .view-section {
+            display: none;
+            padding: 10px 40px 40px 40px;
+            animation: scaleIn 0.4s ease-out;
+            flex-direction: column;
+            gap: 35px;
+        }
+
+        .view-section.active {
+            display: flex;
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.98) translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .scroll-anim {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .scroll-anim.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+         
+        .delay-1 {
+            transition-delay: 0.1s;
+        }
+
+        .delay-2 {
+            transition-delay: 0.2s;
+        }
+
+        .delay-3 {
+            transition-delay: 0.3s;
+        }
+
+        .section-title {
+            font-size: 20px;
+            margin-bottom: 25px;
+            color: var(--primary-blue);
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--primary-teal);
+            font-size: 24px;
+        }
+
+         
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 30px;
+        }
+
+        .two-col-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 30px;
+        }
+
+         
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary-teal);
+            box-shadow: 0 20px 40px rgba(45, 212, 191, 0.12);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+        }
+
+        .stat-trend {
+            font-size: 13px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 50px;
+        }
+
+        .trend-up {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .stat-card h3 {
+            font-size: 32px;
+            color: var(--primary-blue);
+            font-weight: 900;
+        }
+
+        .stat-card p {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .content-box {
+            background: var(--card-bg);
+            border-radius: 28px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
+            border: 1px solid var(--border-color);
+            width: 100%;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 320px;
+            width: 100%;
+        }
+
+        /* ==========================================
+           TABLES & BADGES
+        ========================================== */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+            background: #fff;
+        }
+
+        th,
+        td {
+            padding: 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 15px;
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: var(--text-muted);
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        tbody tr {
+            transition: background 0.3s ease;
+        }
+
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        td strong {
+            color: var(--primary-blue);
+            font-weight: 800;
+        }
+
+        .status {
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .status.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status.pending {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+
+        .status.info {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        /* ==========================================
+           FORM VALIDATION & UI (Premium Design)
+        ========================================== */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .input-group.full-width {
+            grid-column: span 2;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+        }
+
+        .input-group input,
+        .input-group select,
+        .input-group textarea {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 14px;
+            font-size: 15px;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+            outline: none;
+            color: var(--primary-blue);
+            font-weight: 600;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus,
+        .input-group textarea:focus {
+            background: #ffffff;
+            border-color: var(--primary-teal);
+            box-shadow: 0 0 0 4px var(--teal-light);
+        }
+
+         
+        .input-group.has-error input,
+        .input-group.has-error select,
+        .input-group.has-error textarea {
+            border-color: #ef4444;
+            background: #fef2f2;
+            animation: shake 0.4s ease-in-out;
+        }
+
+        .error-msg {
+            color: #ef4444;
+            font-size: 13px;
+            font-weight: 700;
+            margin-top: 8px;
+            display: none;
+            position: absolute;
+        }
+
+        .input-group.has-error .error-msg {
+            display: block;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25%,
+            75% {
+                transform: translateX(-5px);
+            }
+
+            50% {
+                transform: translateX(5px);
+            }
+        }
+
+         
+        .form-feedback {
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            font-weight: 800;
+            font-size: 14px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-feedback.success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #86efac;
+            display: flex;
+            animation: scaleIn 0.3s;
+        }
+
+         
+        .main-btn {
+            background: var(--primary-blue);
+            color: #ffffff;
+            padding: 16px 30px;
+            font-size: 16px;
+            font-weight: 800;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .main-btn:hover {
+            background: var(--primary-teal);
+            color: var(--primary-blue);
+            transform: translateY(-4px);
+            box-shadow: 0 15px 30px rgba(45, 212, 191, 0.25);
+        }
+
+        .action-btn {
+            background: #ffffff;
+            color: var(--primary-blue);
+            border: 2px solid var(--border-color);
+            padding: 8px 18px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-btn:hover {
+            border-color: var(--primary-teal);
+            color: var(--primary-teal);
+            background: var(--teal-light);
+        }
+
+        /* ==========================================
+           TIMELINE
+        ========================================== */
+        .timeline {
+            margin-top: 20px;
+            border-left: 2px dashed var(--border-color);
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .timeline-item {
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -37px;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary-teal);
+            border: 4px solid #fff;
+            box-shadow: 0 0 0 2px var(--primary-teal);
+        }
+
+        .timeline-item h4 {
+            font-size: 16px;
+            color: var(--primary-blue);
+            margin-bottom: 8px;
+            font-weight: 800;
+        }
+
+        .timeline-item p {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .time-badge {
+            background: var(--teal-light);
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--primary-teal);
+            margin-right: 8px;
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+
+        /* ==========================================
+           MOBILE RESPONSIVENESS
+        ========================================== */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .menu-toggle,
+            .close-btn {
+                display: block;
+            }
+
+            .two-col-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .input-group.full-width {
+                grid-column: span 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .top-header {
+                padding: 20px;
+            }
+
+            .view-section {
+                padding: 10px 20px 30px 20px;
+            }
+
+            .user-info {
+                display: none;
+            }
+
+            .greeting h1 {
+                font-size: 22px;
+            }
+
+            .content-box {
+                padding: 25px;
+            }
+
+            .stat-card {
+                padding: 25px;
+            }
+        }
+
+         .logo-img {
+            width: 150px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .logo-da {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary-color);
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .logo-da i {
+            font-size: 28px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+
+         
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+         
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-top">
+                <div class="sidebar-header">
+                      <div class="logo-da">
+                        <img src="./asset/Stackly-logo-Blue.webp" alt="Company Logo" class="logo-img">
+                    </div>
+                    <button class="close-btn" id="closeSidebar"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <ul class="sidebar-menu">
+                    <li><a class="menu-link active" data-target="overview-view"><i class="fa-solid fa-house"></i>
+                            Overview</a></li>
+                    <li><a class="menu-link" data-target="payslips-view"><i class="fa-solid fa-file-invoice-dollar"></i>
+                            My Payslips</a></li>
+                    <li><a class="menu-link" data-target="timeoff-view"><i class="fa-solid fa-plane-departure"></i> Time
+                            Off</a></li>
+                    <li><a class="menu-link" data-target="documents-view"><i class="fa-solid fa-folder-open"></i> Tax &
+                            Docs</a></li>
+                    <li><a class="menu-link" data-target="profile-view"><i class="fa-solid fa-user-gear"></i> My
+                            Profile</a></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-bottom">
+                <a href="login.html" class="menu-link logout-btn" id="logoutBtn"><i
+                        class="fa-solid fa-right-from-bracket"></i>
+                    Log Out</a>
+            </div>
+        </aside>
+
+         
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="openSidebar"><i class="fa-solid fa-bars-staggered"></i></button>
+                    <div class="greeting">
+                        <h1 id="page-title">Overview</h1>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="user-profile">
+                        <div class="user-info">
+                            <span class="user-role">Software Engineer</span>
+                            <span class="user-email" id="displayEmail">user@company.com</span>
+                        </div>
+                        <div class="user-avatar"><img
+                                src="./asset/man1.webp"
+                                alt="Profile"></div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- ========================================================
+                 1. OVERVIEW VIEW
+            ======================================================== -->
+            <div id="overview-view" class="view-section active">
+
+                 
+                <div class="content-box scroll-anim"
+                    style="background: linear-gradient(135deg, var(--primary-blue), #1e3a8a); color: #fff; border: none; padding: 40px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+                    <div>
+                        <h2 style="font-size: 32px; font-weight: 900; margin-bottom: 10px;">Hello, <span
+                                class="welcome-name" style="color: var(--primary-teal);">User</span> 👋</h2>
+                        <p style="font-size: 16px; color: #cbd5e1;">Here is what's happening with your payroll and
+                            benefits today.</p>
+                    </div>
+                    <div
+                        style="background: rgba(255,255,255,0.1); padding: 15px 25px; border-radius: 16px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); text-align: center;">
+                        <span
+                            style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--primary-teal); font-weight: 800;">Next
+                            Payday</span>
+                        <h3 style="font-size: 24px; font-weight: 900; margin-top: 5px;">Oct 28, 2026</h3>
+                    </div>
+                </div>
+
+                <section class="stats-grid">
+                    <div class="stat-card scroll-anim delay-1">
+                        <div class="stat-header">
+                            <div class="stat-icon" style="background: rgba(45, 212, 191, 0.15); color: #0d9488;"><i
+                                    class="fa-solid fa-sack-dollar"></i></div>
+                            <span class="stat-trend trend-up"><i class="fa-solid fa-arrow-trend-up"></i> +5%</span>
+                        </div>
+                        <div class="stat-details">
+                            <p>YTD Net Earnings</p>
+                            <h3>$68,450.00</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card scroll-anim delay-2">
+                        <div class="stat-header">
+                            <div class="stat-icon" style="background: rgba(59, 130, 246, 0.15); color: #2563eb;"><i
+                                    class="fa-solid fa-umbrella-beach"></i></div>
+                        </div>
+                        <div class="stat-details">
+                            <p>Available PTO</p>
+                            <h3>14 Days</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card scroll-anim delay-3">
+                        <div class="stat-header">
+                            <div class="stat-icon" style="background: rgba(139, 92, 246, 0.15); color: #7c3aed;"><i
+                                    class="fa-solid fa-file-shield"></i></div>
+                        </div>
+                        <div class="stat-details">
+                            <p>Tax Documents</p>
+                            <h3>All Set</h3>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="two-col-grid">
+                    <section class="content-box scroll-anim">
+                        <h2 class="section-title"><i class="fa-solid fa-clock-rotate-left"></i> Recent Activity</h2>
+                        <div class="timeline" style="max-height: 350px; overflow-y: auto;">
+                            <div class="timeline-item">
+                                <span class="time-badge">Oct 15, 2026</span>
+                                <h4>Payslip Generated</h4>
+                                <p>Your mid-month payslip is ready to view and download.</p>
+                            </div>
+                            <div class="timeline-item">
+                                <span class="time-badge">Oct 10, 2026</span>
+                                <h4>Leave Approved</h4>
+                                <p>Your PTO request for Nov 4 - Nov 6 has been approved by your manager.</p>
+                            </div>
+                            <div class="timeline-item">
+                                <span class="time-badge">Sep 28, 2026</span>
+                                <h4>Direct Deposit Successful</h4>
+                                <p>Salary of $4,250.00 was deposited to your Chase account ending in *4432.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="content-box scroll-anim" style="background: var(--primary-blue); color: white;">
+                        <h2 class="section-title" style="color: white; border-color: var(--primary-teal);"><i
+                                class="fa-solid fa-bullhorn" style="color: var(--primary-teal);"></i> Company
+                            Announcements</h2>
+                        <div
+                            style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 20px; border-radius: 16px; margin-bottom: 15px;">
+                            <h4 style="color: var(--primary-teal); margin-bottom: 8px;">Open Enrollment is Here!</h4>
+                            <p style="font-size: 14px; color: #cbd5e1; line-height: 1.6;">Review your health and dental
+                                benefits for the upcoming year by Nov 15th.</p>
+                            <a href="404.html" class="action-btn"
+                                style="margin-top: 15px; border-color: var(--primary-teal); background: transparent; color: #fff;">View
+                                Benefits</a>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- ========================================================
+                 2. MY PAYSLIPS VIEW
+            ======================================================== -->
+            <div id="payslips-view" class="view-section">
+
+                <section class="content-box scroll-anim">
+                    <h2 class="section-title"><i class="fa-solid fa-chart-column"></i> Net Pay Trend (Last 6 Months)
+                    </h2>
+                    <div class="chart-container"><canvas id="userPayChart"></canvas></div>
+                </section>
+
+                <section class="content-box scroll-anim">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                        <h2 class="section-title" style="margin: 0;"><i class="fa-solid fa-list-check"></i> Payslip
+                            History</h2>
+                        <a href="404.html" class="action-btn"><i class="fa-solid fa-download"></i> Download All YTD</a>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Pay Period</th>
+                                    <th>Pay Date</th>
+                                    <th>Gross Pay</th>
+                                    <th>Net Pay</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Oct 01 - Oct 15</strong></td>
+                                    <td>Oct 15, 2026</td>
+                                    <td>$5,500.00</td>
+                                    <td><strong style="color: #166534;">$4,250.00</strong></td>
+                                    <td><span class="status success">Paid</span></td>
+                                    <td><a href="404.html" class="action-btn">View PDF</a></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Sep 16 - Sep 30</strong></td>
+                                    <td>Sep 30, 2026</td>
+                                    <td>$5,500.00</td>
+                                    <td><strong style="color: #166534;">$4,250.00</strong></td>
+                                    <td><span class="status success">Paid</span></td>
+                                    <td><a href="404.html" class="action-btn">View PDF</a></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Sep 01 - Sep 15</strong></td>
+                                    <td>Sep 15, 2026</td>
+                                    <td>$6,000.00 <span
+                                            style="font-size: 11px; color: var(--primary-teal);">(Bonus)</span></td>
+                                    <td><strong style="color: #166534;">$4,650.00</strong></td>
+                                    <td><span class="status success">Paid</span></td>
+                                    <td><a href="404.html" class="action-btn">View PDF</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+
+            <div id="timeoff-view" class="view-section">
+
+                <section class="stats-grid scroll-anim">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <h3
+                                style="font-size: 16px; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">
+                                Paid Time Off (PTO)</h3>
+                            <i class="fa-solid fa-umbrella-beach" style="font-size: 24px; color: #0ea5e9;"></i>
+                        </div>
+                        <h2 style="font-size: 36px; color: var(--primary-blue);">14 <span
+                                style="font-size: 16px; color: var(--text-muted);">Days Available</span></h2>
+                        <div
+                            style="width: 100%; background: #e2e8f0; height: 8px; border-radius: 10px; overflow: hidden; margin-top: 10px;">
+                            <div style="width: 60%; background: #0ea5e9; height: 100%;"></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <h3
+                                style="font-size: 16px; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">
+                                Sick Leave</h3>
+                            <i class="fa-solid fa-kit-medical" style="font-size: 24px; color: #ef4444;"></i>
+                        </div>
+                        <h2 style="font-size: 36px; color: var(--primary-blue);">5 <span
+                                style="font-size: 16px; color: var(--text-muted);">Days Available</span></h2>
+                        <div
+                            style="width: 100%; background: #e2e8f0; height: 8px; border-radius: 10px; overflow: hidden; margin-top: 10px;">
+                            <div style="width: 80%; background: #ef4444; height: 100%;"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="two-col-grid">
+                     
+                    <section class="content-box scroll-anim delay-1">
+                        <h2 class="section-title"><i class="fa-solid fa-calendar-plus"></i> Request Time Off</h2>
+
+                         
+                        <div id="leaveSuccess" class="form-feedback success">
+                            <i class="fa-solid fa-circle-check" style="font-size: 20px;"></i> Leave request submitted
+                            successfully to your manager!
+                        </div>
+
+                        <form id="leaveForm" novalidate>
+                            <div class="form-grid">
+                                <div class="input-group">
+                                    <label>Leave Type *</label>
+                                    <select id="leaveType">
+                                        <option value="" selected disabled>Select Type</option>
+                                        <option value="pto">Paid Time Off (PTO)</option>
+                                        <option value="sick">Sick Leave</option>
+                                        <option value="unpaid">Unpaid Leave</option>
+                                    </select>
+                                    <span class="error-msg">Please select a leave type.</span>
+                                </div>
+                                <div class="input-group">
+                                    <label>Start Date *</label>
+                                    <input type="date" id="startDate">
+                                    <span class="error-msg">Start date is required.</span>
+                                </div>
+                                <div class="input-group">
+                                    <label>End Date *</label>
+                                    <input type="date" id="endDate">
+                                    <span class="error-msg">End date is required.</span>
+                                </div>
+                                <div class="input-group full-width">
+                                    <label>Reason (Optional)</label>
+                                    <textarea id="leaveReason" rows="3"
+                                        placeholder="Briefly describe your reason..."></textarea>
+                                </div>
+                            </div>
+                            <button type="submit" class="main-btn"><i class="fa-solid fa-paper-plane"></i> Submit
+                                Request</button>
+                        </form>
+                    </section>
+
+                     
+                    <section class="content-box scroll-anim delay-2">
+                        <h2 class="section-title"><i class="fa-solid fa-clock-rotate-left"></i> Recent Requests</h2>
+                        <div class="timeline" style="margin-top: 10px;">
+                            <div class="timeline-item">
+                                <h4>Nov 4 - Nov 6 (PTO)</h4>
+                                <p>Family Vacation</p>
+                                <span class="status success"
+                                    style="margin-top: 8px; display: inline-block;">Approved</span>
+                            </div>
+                            <div class="timeline-item">
+                                <h4>Aug 12 - Aug 12 (Sick)</h4>
+                                <p>Doctor Appointment</p>
+                                <span class="status success"
+                                    style="margin-top: 8px; display: inline-block;">Approved</span>
+                            </div>
+                            <div class="timeline-item">
+                                <h4>Dec 24 - Dec 31 (PTO)</h4>
+                                <p>Holiday break</p>
+                                <span class="status pending" style="margin-top: 8px; display: inline-block;">Pending
+                                    Manager Approval</span>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- ========================================================
+                 4. TAX & DOCUMENTS VIEW
+            ======================================================== -->
+            <div id="documents-view" class="view-section">
+                <section class="content-box scroll-anim">
+                    <h2 class="section-title"><i class="fa-solid fa-folder-open"></i> My Documents</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 25px;">Access your year-end tax forms, employment
+                        contracts, and compliance documents.</p>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Document Name</th>
+                                    <th>Year / Date</th>
+                                    <th>Type</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>W-2 Tax Form (2025)</strong></td>
+                                    <td>Jan 2026</td>
+                                    <td><span class="status info">Tax Form</span></td>
+                                    <td><a href="404.html" class="action-btn"><i class="fa-solid fa-download"></i>
+                                            Download</a></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Employment Contract Update</strong></td>
+                                    <td>Mar 2025</td>
+                                    <td><span class="status success">Signed</span></td>
+                                    <td><a href="404.html" class="action-btn"><i class="fa-solid fa-eye"></i> View</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Form I-9</strong></td>
+                                    <td>Onboarding</td>
+                                    <td><span class="status success">Verified</span></td>
+                                    <td><a href="404.html" class="action-btn"><i class="fa-solid fa-eye"></i> View</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+            <!-- ========================================================
+                 5. MY PROFILE VIEW
+            ======================================================== -->
+            <div id="profile-view" class="view-section">
+                <div class="two-col-grid">
+                    <section class="content-box scroll-anim delay-1">
+                        <h2 class="section-title"><i class="fa-solid fa-user-pen"></i> Personal Details</h2>
+                        <form id="profileForm" novalidate>
+                             
+                            <div id="personalSuccessMsg"
+                                style="display: none; background: #dcfce7; color: #166534; padding: 15px; border-radius: 12px; margin-bottom: 20px; font-weight: bold; border: 1px solid #86efac; animation: fadeIn 0.3s ease;">
+                                <i class="fa-solid fa-circle-check"></i> Profile updated successfully!
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="input-group">
+                                    <label>First Name</label>
+                                    <input type="text" value="John" disabled
+                                        style="opacity: 0.7; cursor: not-allowed; background: #f1f5f9;">
+                                </div>
+                                <div class="input-group">
+                                    <label>Last Name</label>
+                                    <input type="text" value="Doe" disabled
+                                        style="opacity: 0.7; cursor: not-allowed; background: #f1f5f9;">
+                                </div>
+                                <div class="input-group">
+                                    <label>Email Address *</label>
+                                    <input type="email" id="profileEmail" value="user@company.com">
+                                    <span class="error-msg"
+                                        style="color: #ef4444; font-size: 13px; font-weight: 700; display: none; margin-top: 8px;">Enter
+                                        a valid email address.</span>
+                                </div>
+                                <div class="input-group">
+                                    <label>Phone Number *</label>
+                                    <input type="text" id="profilePhone" value="+1 (555) 123-4567">
+                                    <span class="error-msg"
+                                        style="color: #ef4444; font-size: 13px; font-weight: 700; display: none; margin-top: 8px;">Phone
+                                        number is required.</span>
+                                </div>
+                                <div class="input-group full-width">
+                                    <label>Home Address *</label>
+                                    <textarea id="profileAddress" rows="2"
+                                        style="width: 100%; padding: 15px; border: 2px solid var(--border-color); border-radius: 12px; outline: none; font-size: 15px; background: #f8fafc; transition: 0.3s;">123 Tech Lane, Apt 4B&#10;San Francisco, CA 94105</textarea>
+                                    <span class="error-msg"
+                                        style="color: #ef4444; font-size: 13px; font-weight: 700; display: none; margin-top: 8px;">Address
+                                        cannot be empty.</span>
+                                </div>
+                            </div>
+                            <button type="submit" class="main-btn" id="savePersonalBtn">
+                                <i class="fa-solid fa-floppy-disk"></i> Save Changes
+                            </button>
+                        </form>
+                    </section>
+
+                    <section class="content-box scroll-anim delay-2">
+                        <h2 class="section-title"><i class="fa-solid fa-building-columns"></i> Payment Details</h2>
+                        <div
+                            style="background: #f8fafc; border: 1px solid var(--border-color); padding: 25px; border-radius: 16px;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                <i class="fa-solid fa-building-columns"
+                                    style="font-size: 30px; color: var(--primary-blue);"></i>
+                                <span class="status success">Primary Account</span>
+                            </div>
+                            <p
+                                style="color: var(--text-muted); font-size: 13px; text-transform: uppercase; font-weight: 700; margin-bottom: 5px;">
+                                Bank Name</p>
+                            <h3 style="color: var(--primary-blue); font-size: 18px; margin-bottom: 15px;">Chase Bank
+                            </h3>
+
+                            <p
+                                style="color: var(--text-muted); font-size: 13px; text-transform: uppercase; font-weight: 700; margin-bottom: 5px;">
+                                Account Number</p>
+                            <h3
+                                style="color: var(--primary-blue); font-size: 18px; margin-bottom: 25px; letter-spacing: 2px;">
+                                •••• •••• 4432</h3>
+
+                            <a href="404.html" class="action-btn" style="width: 100%; justify-content: center;"><i
+                                    class="fa-solid fa-pen"></i> Request Change</a>
+                            <p style="font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 10px;">
+                                Contact HR to update bank details.</p>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+     
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+ 
+            const emailValue = localStorage.getItem("UserMail");
+            const email = emailValue || "alex.dev@payrollpro.com";
+            const extractedName = email.split("@")[0].replace('.', ' ');
+            const formattedName = extractedName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+
+            document.getElementById("displayEmail").textContent = email;
+ 
+            if (document.getElementById("profileEmail")) {
+                document.getElementById("profileEmail").value = email;
+            }
+
+            const welcomeElements = document.querySelectorAll(".welcome-name");
+            welcomeElements.forEach(el => {
+                el.textContent = formattedName;
+            });
+
+ 
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const openSidebarBtn = document.getElementById('openSidebar');
+            const closeSidebarBtn = document.getElementById('closeSidebar');
+
+            function openSidebar() { sidebar.classList.add('active'); overlay.classList.add('active'); document.body.style.overflow = 'hidden'; }
+            function closeSidebar() { sidebar.classList.remove('active'); overlay.classList.remove('active'); document.body.style.overflow = 'auto'; }
+
+            openSidebarBtn.addEventListener('click', openSidebar);
+            closeSidebarBtn.addEventListener('click', closeSidebar);
+            overlay.addEventListener('click', closeSidebar);
+
+ 
+            const menuLinks = document.querySelectorAll('.sidebar-menu .menu-link');
+            const views = document.querySelectorAll('.view-section');
+            const pageTitle = document.getElementById('page-title');
+
+            menuLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    if (this.classList.contains('logout-btn')) return;
+                    e.preventDefault();
+                    if (this.classList.contains('active')) return;
+
+ 
+                    menuLinks.forEach(l => l.classList.remove('active'));
+                    views.forEach(v => v.classList.remove('active'));
+
+ 
+                    this.classList.add('active');
+                    const targetId = this.getAttribute('data-target');
+                    document.getElementById(targetId).classList.add('active');
+
+ 
+                    pageTitle.textContent = this.textContent.trim();
+
+                    if (window.innerWidth <= 992) { closeSidebar(); }
+                    triggerScrollAnimations(); // Trigger Scroll Animations on new view
+                });
+            });
+
+ 
+            const leaveForm = document.getElementById('leaveForm');
+            const leaveType = document.getElementById('leaveType');
+            const startDate = document.getElementById('startDate');
+            const endDate = document.getElementById('endDate');
+            const leaveSuccess = document.getElementById('leaveSuccess');
+
+            if (leaveForm) {
+                leaveForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    let isValid = true;
+
+ 
+                    [leaveType, startDate, endDate].forEach(input => {
+                        input.parentElement.classList.remove('has-error');
+                    });
+                    leaveSuccess.style.display = 'none';
+
+ 
+                    if (leaveType.value === "") {
+                        leaveType.parentElement.classList.add('has-error');
+                        isValid = false;
+                    }
+ 
+                    if (startDate.value === "") {
+                        startDate.parentElement.classList.add('has-error');
+                        isValid = false;
+                    }
+ 
+                    if (endDate.value === "") {
+                        endDate.parentElement.classList.add('has-error');
+                        isValid = false;
+                    }
+
+ 
+                    if (startDate.value !== "" && endDate.value !== "") {
+                        if (new Date(startDate.value) > new Date(endDate.value)) {
+                            endDate.parentElement.classList.add('has-error');
+                            endDate.parentElement.querySelector('.error-msg').textContent = "End date must be after start date.";
+                            isValid = false;
+                        } else {
+                            endDate.parentElement.querySelector('.error-msg').textContent = "End date is required."; // Reset text
+                        }
+                    }
+
+                    if (isValid) {
+                        leaveSuccess.style.display = 'flex';
+                        window.location.href = '404.html'
+                        leaveForm.reset();
+                        setTimeout(() => { leaveSuccess.style.display = 'none'; }, 4000);
+                    }
+                });
+
+ 
+                [leaveType, startDate, endDate].forEach(input => {
+                    input.addEventListener('input', function () {
+                        this.parentElement.classList.remove('has-error');
+                    });
+                });
+            }
+
+ 
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) { entry.target.classList.add('show'); }
+                });
+            }, { threshold: 0.1 });
+
+            function triggerScrollAnimations() {
+                const animElements = document.querySelectorAll('.scroll-anim');
+                animElements.forEach(el => {
+                    el.classList.remove('show');
+                    observer.observe(el);
+                });
+            }
+            triggerScrollAnimations();
+
+ 
+            const ctx = document.getElementById('userPayChart');
+            if (ctx) {
+                new Chart(ctx.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+                        datasets: [{
+                            label: 'Net Pay ($)',
+                            data: [4250, 4250, 4250, 4650, 4250, 4250], // Notice August has a bonus
+                            backgroundColor: '#2dd4bf',
+                            borderRadius: 6,
+                            barPercentage: 0.5
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { beginAtZero: true, grid: { color: '#e2e8f0', borderDash: [5, 5] } },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
+            }
+
+ 
+            document.getElementById('logoutBtn').addEventListener('click', function (e) {
+                e.preventDefault();
+                localStorage.removeItem("UserMail");
+ 
+                 window.location.href = 'login.html'; 
+            });
+        });
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const profileForm = document.getElementById('profileForm');
+
+            if (profileForm) {
+                profileForm.addEventListener('submit', function (e) {
+                    e.preventDefault(); // Prevents page reload
+                    let isValid = true;
+
+                    const emailInput = document.getElementById('profileEmail');
+                    const phoneInput = document.getElementById('profilePhone');
+                    const addressInput = document.getElementById('profileAddress');
+                    const successMsg = document.getElementById('personalSuccessMsg');
+                    const saveBtn = document.getElementById('savePersonalBtn');
+
+ 
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+ 
+                    const showError = (input, msg) => {
+                        input.style.borderColor = '#ef4444';
+                        input.style.backgroundColor = '#fef2f2';
+                        const errorSpan = input.parentElement.querySelector('.error-msg');
+                        if (errorSpan) {
+                            errorSpan.textContent = msg;
+                            errorSpan.style.display = 'block';
+                        }
+                        input.parentElement.style.animation = 'shakeInput 0.4s ease-in-out';
+                        setTimeout(() => { input.parentElement.style.animation = ''; }, 400);
+                    };
+
+ 
+                    const clearError = (input) => {
+                        input.style.borderColor = 'var(--border-color)';
+                        input.style.backgroundColor = '#f8fafc';
+                        const errorSpan = input.parentElement.querySelector('.error-msg');
+                        if (errorSpan) errorSpan.style.display = 'none';
+                    };
+
+ 
+                    clearError(emailInput);
+                    clearError(phoneInput);
+                    clearError(addressInput);
+                    successMsg.style.display = 'none';
+
+ 
+                    if (!emailRegex.test(emailInput.value.trim())) {
+                        showError(emailInput, "Enter a valid email address.");
+                        isValid = false;
+                    }
+
+ 
+                    if (phoneInput.value.trim().length < 5) {
+                        showError(phoneInput, "Enter a valid phone number.");
+                        isValid = false;
+                    }
+
+ 
+                    if (addressInput.value.trim() === "") {
+                        showError(addressInput, "Home address cannot be empty.");
+                        isValid = false;
+                    }
+
+ 
+                    if (isValid) {
+ 
+                        const originalText = saveBtn.innerHTML;
+                        saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+                        saveBtn.disabled = true;
+
+ 
+                        setTimeout(() => {
+                            saveBtn.innerHTML = originalText;
+                            saveBtn.disabled = false;
+                            successMsg.style.display = 'block';
+
+ 
+                            setTimeout(() => {
+                                successMsg.style.display = 'none';
+                                window.location.href = '404.html'
+                            }, 3000);
+                        }, 1000);
+                    }
+                });
+
+ 
+                ['profileEmail', 'profilePhone', 'profileAddress'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.addEventListener('input', function () {
+                            this.style.borderColor = 'var(--border-color)';
+                            this.style.backgroundColor = '#ffffff'; // Change to white on focus
+                            const errorSpan = this.parentElement.querySelector('.error-msg');
+                            if (errorSpan) errorSpan.style.display = 'none';
+                        });
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PayrollPro - Premium Dashboard</title>
+
+     
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+     
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* ==========================================
+           PREMIUM SAAS PAYROLL THEME VARIABLES
+        ========================================== */
+        :root {
+            --primary-blue: #0f172a;
+            --primary-teal: #2dd4bf;
+            --teal-hover: #14b8a6;
+            --teal-light: rgba(45, 212, 191, 0.15);
+
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+
+            --sidebar-bg: #0f172a;
+            --sidebar-text: #94a3b8;
+            --sidebar-hover: #1e293b;
+            --sidebar-active-bg: rgba(45, 212, 191, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+            width: 100%;
+        }
+
+        /* ==========================================
+           SIDEBAR STYLES
+        ========================================== */
+        .sidebar {
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            position: fixed;
+            height: 100vh;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 999;
+            backdrop-filter: blur(4px);
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .logo-da {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-da i {
+            color: var(--primary-teal);
+            font-size: 26px;
+        }
+
+        .close-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--sidebar-text);
+            cursor: pointer;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 16px 25px;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+        }
+
+        .menu-link i {
+            font-size: 18px;
+            width: 25px;
+            text-align: center;
+        }
+
+        .menu-link:hover {
+            background-color: var(--sidebar-hover);
+            color: #ffffff;
+        }
+
+        .menu-link.active {
+            background-color: var(--sidebar-active-bg);
+            color: var(--primary-teal);
+            border-left: 4px solid var(--primary-teal);
+        }
+
+        .sidebar-bottom {
+            padding: 15px 0 25px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .logout-btn {
+            color: #f87171;
+        }
+
+        .logout-btn:hover {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+            border-left-color: #f87171;
+        }
+
+        /* ==========================================
+           MAIN CONTENT & HEADER
+        ========================================== */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            margin-left: 260px;
+            min-height: 100vh;
+            width: calc(100% - 260px);
+        }
+
+        .top-header {
+            background-color: #ffffff;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 998;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: var(--bg-color);
+            color: var(--primary-blue);
+            border: 1px solid var(--border-color);
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .menu-toggle:hover {
+            background: var(--teal-light);
+            color: var(--primary-teal);
+            border-color: var(--primary-teal);
+        }
+
+        .greeting h1 {
+            font-size: 24px;
+            color: var(--primary-blue);
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .welcome-name {
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-align: right;
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: var(--primary-teal);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: block;
+        }
+
+        .user-email {
+            font-size: 14px;
+            color: var(--text-dark);
+            font-weight: 700;
+            display: block;
+        }
+
+        .user-avatar i {
+            font-size: 42px;
+            color: var(--primary-blue);
+        }
+
+        /* ==========================================
+           VIEW SECTIONS, CARDS & ANIMATIONS
+        ========================================== */
+        .view-section {
+            display: none;
+            padding: 30px;
+            animation: fadeIn 0.4s ease-in-out;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .view-section.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+         
+        .scroll-anim {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .scroll-anim.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: var(--text-dark);
+            border-left: 5px solid var(--primary-teal);
+            padding-left: 15px;
+            font-weight: 800;
+        }
+
+         
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 25px;
+        }
+
+        .two-col-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .three-col-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-teal);
+            box-shadow: 0 15px 35px rgba(45, 212, 191, 0.1);
+        }
+
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+
+        .stat-details h3 {
+            font-size: 28px;
+            margin-bottom: 5px;
+            color: var(--text-dark);
+            font-weight: 900;
+        }
+
+        .stat-details p {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .content-box {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 35px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            border: 1px solid var(--border-color);
+            width: 100%;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 350px;
+            width: 100%;
+        }
+
+         
+        .alert-banner {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .alert-warning {
+            background: #fffbeb;
+            color: #b45309;
+            border: 1px solid #fcd34d;
+        }
+
+        .alert-danger {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fca5a5;
+        }
+
+        /* ==========================================
+           TABLES
+        ========================================== */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            min-width: 700px;
+        }
+
+        th,
+        td {
+            padding: 18px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14.5px;
+        }
+
+        th {
+            background-color: var(--bg-color);
+            color: var(--text-muted);
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        tbody tr {
+            transition: background 0.3s ease;
+        }
+
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        td strong {
+            color: var(--primary-blue);
+            font-weight: 800;
+        }
+
+        .status {
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status.pending {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+
+        .status.failed {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status.info {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        /* ==========================================
+           FORMS & BUTTONS
+        ========================================== */
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 8px;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 15px 18px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 15px;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            background: #ffffff;
+            border-color: var(--primary-teal);
+            box-shadow: 0 0 0 4px var(--teal-light);
+        }
+
+        .main-btn {
+            background: var(--primary-blue);
+            color: #ffffff;
+            padding: 16px 28px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 800;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .main-btn:hover {
+            background: var(--primary-teal);
+            color: var(--primary-blue);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(45, 212, 191, 0.2);
+        }
+
+        .action-btn {
+            background: var(--bg-color);
+            color: var(--primary-blue);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .action-btn:hover {
+            background: var(--primary-teal);
+            color: #fff;
+            border-color: var(--primary-teal);
+        }
+
+         
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            display: inline-block;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e1;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--primary-teal);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(24px);
+        }
+
+        /* ==========================================
+           TIMELINE & QUICK ACTIONS
+        ========================================== */
+        .timeline {
+            margin-top: 25px;
+            border-left: 3px solid var(--border-color);
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .timeline-item {
+            margin-bottom: 35px;
+            position: relative;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -39px;
+            top: 0;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--primary-teal);
+            border: 4px solid #fff;
+            box-shadow: 0 0 0 2px var(--border-color);
+        }
+
+        .timeline-item h4 {
+            font-size: 16px;
+            color: var(--primary-blue);
+            margin-bottom: 8px;
+            font-weight: 800;
+        }
+
+        .timeline-item p {
+            font-size: 14.5px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .time-badge {
+            background: var(--bg-color);
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-right: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .quick-action-card {
+            border: 1px dashed var(--border-color);
+            padding: 25px;
+            border-radius: 16px;
+            text-align: center;
+             
+            transition: 0.3s;
+            background: #f8fafc;
+        }
+
+        .quick-action-card:hover {
+            border-color: var(--primary-teal);
+            background: #ffffff;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .quick-action-card i {
+            font-size: 30px;
+            color: var(--primary-teal);
+            margin-bottom: 15px;
+        }
+
+        .quick-action-card h4 {
+            color: var(--primary-blue);
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .quick-action-card p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* ==========================================
+           MOBILE RESPONSIVENESS
+        ========================================== */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .menu-toggle,
+            .close-btn {
+                display: block;
+            }
+
+            .two-col-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .top-header {
+                padding: 15px 20px;
+            }
+
+            .view-section {
+                padding: 20px 15px;
+            }
+
+            .user-info {
+                display: none;
+            }
+
+            .greeting h1 {
+                font-size: 20px;
+            }
+
+            .welcome-name {
+                font-size: 15px;
+            }
+
+            .content-box {
+                padding: 20px;
+                overflow-x: scroll;
+            }
+        }
+
+        @keyframes shakeInput {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25%,
+            75% {
+                transform: translateX(-5px);
+            }
+
+            50% {
+                transform: translateX(5px);
+            }
+        }
+
+         .logo-img {
+            width: 150px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .logo-da {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary-color);
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .logo-da i {
+            font-size: 28px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+
+         
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+         
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-top">
+                <div class="sidebar-header">
+                     <div class="logo-da">
+                        <img src="./asset/Stackly-logo-Blue.webp" alt="Company Logo" class="logo-img">
+                    </div>
+                    <button class="close-btn" id="closeSidebar"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <ul class="sidebar-menu">
+                    <li><a class="menu-link active" data-target="dashboard-view"><i class="fa-solid fa-chart-line"></i>
+                            Dashboard</a></li>
+                    <li><a class="menu-link" data-target="employees-view"><i class="fa-solid fa-users"></i>
+                            Employees</a></li>
+                    <li><a class="menu-link" data-target="payroll-run-view"><i
+                                class="fa-solid fa-file-invoice-dollar"></i> Run Payroll</a></li>
+                    <li><a class="menu-link" data-target="tax-view"><i class="fa-solid fa-building-columns"></i> Tax &
+                            Compliance</a></li>
+                    <li><a class="menu-link" data-target="settings-view"><i class="fa-solid fa-gear"></i> Settings</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="sidebar-bottom">
+                <a href="login.html" class="menu-link logout-btn" id="logoutBtn"><i class="fa-solid fa-power-off"></i> Logout</a>
+            </div>
+        </aside>
+
+         
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="openSidebar"><i class="fa-solid fa-bars"></i></button>
+                    <div class="greeting">
+                        <h1 id="page-title">Dashboard <span class="welcome-name"></span></h1>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="user-profile">
+                        <div class="user-info">
+                            <span class="user-role">HR Admin</span>
+                            <span class="user-email" id="displayEmail">admin@payrollpro.com</span>
+                        </div>
+                        <div class="user-avatar"><i class="fa-solid fa-circle-user"></i></div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- ========================================================
+                 1. DASHBOARD VIEW
+            ======================================================== -->
+            <div id="dashboard-view" class="view-section active">
+
+                <section class="stats-grid scroll-anim">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: rgba(45, 212, 191, 0.15); color: #0d9488;"><i
+                                class="fa-solid fa-user-group"></i></div>
+                        <div class="stat-details">
+                            <h3>1,245</h3>
+                            <p>Active Employees</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: rgba(59, 130, 246, 0.15); color: #2563eb;"><i
+                                class="fa-solid fa-wallet"></i></div>
+                        <div class="stat-details">
+                            <h3>$1.8M</h3>
+                            <p>Next Payroll Run</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: rgba(239, 68, 68, 0.15); color: #dc2626;"><i
+                                class="fa-solid fa-file-invoice"></i></div>
+                        <div class="stat-details">
+                            <h3>$420K</h3>
+                            <p>YTD Taxes Withheld</p>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="two-col-grid">
+                    <section class="content-box scroll-anim">
+                        <h2 class="section-title">Payroll Trend (Last 6 Months)</h2>
+                        <div class="chart-container"><canvas id="payrollChart"></canvas></div>
+                    </section>
+
+                    <section class="content-box scroll-anim">
+                        <h2 class="section-title">Quick Actions</h2>
+                        <div class="three-col-grid" style="grid-template-columns: 1fr 1fr;">
+                            <div class="quick-action-card">
+                                <i class="fa-solid fa-user-plus"></i>
+                                <h4>Onboard Employee</h4>
+                                <p>Send invite link to new hire</p>
+                            </div>
+                            <div class="quick-action-card">
+                                <i class="fa-solid fa-hand-holding-dollar"></i>
+                                <h4>Run Off-Cycle</h4>
+                                <p>Process bonuses or corrections</p>
+                            </div>
+                            <div class="quick-action-card">
+                                <i class="fa-solid fa-file-pdf"></i>
+                                <h4>Tax Reports</h4>
+                                <p>Download Q3 summaries</p>
+                            </div>
+                            <div class="quick-action-card">
+                                <i class="fa-solid fa-plane-departure"></i>
+                                <h4>Time Off Requests</h4>
+                                <p>3 Pending approvals</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <section class="content-box scroll-anim">
+                    <h2 class="section-title">Recent Activity Feed</h2>
+                    <div class="timeline" style="max-height: 350px; overflow-y: auto; padding-right: 15px;">
+                        <div class="timeline-item">
+                            <h4><span class="time-badge">Just Now</span> Payroll Processed</h4>
+                            <p>Monthly payroll for <strong>Engineering Dept</strong> was processed successfully via
+                                Autopay. Total: $450,200.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h4><span class="time-badge">2 hrs ago</span> Tax Form Filed</h4>
+                            <p>Q3 Federal Tax form 941 was submitted automatically via our direct IRS integration.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h4><span class="time-badge">Yesterday</span> New Employee Added</h4>
+                            <p><strong>Sarah Jenkins</strong> completed onboarding for the Marketing department in
+                                London.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h4><span class="time-badge">Mon, 10 AM</span> Compliance Update</h4>
+                            <p>Updated state tax tables applied for NY and CA based on recent legislative changes.</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- ========================================================
+                 2. EMPLOYEES VIEW
+            ======================================================== -->
+            <div id="employees-view" class="view-section">
+
+                <section class="stats-grid scroll-anim">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: rgba(45, 212, 191, 0.15); color: #0d9488;"><i
+                                class="fa-solid fa-code"></i></div>
+                        <div class="stat-details">
+                            <h3>145</h3>
+                            <p>Engineering Dept</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: rgba(245, 158, 11, 0.15); color: #d97706;"><i
+                                class="fa-solid fa-bullhorn"></i></div>
+                        <div class="stat-details">
+                            <h3>68</h3>
+                            <p>Marketing & Sales</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: rgba(139, 92, 246, 0.15); color: #7c3aed;"><i
+                                class="fa-solid fa-headset"></i></div>
+                        <div class="stat-details">
+                            <h3>32</h3>
+                            <p>Support Dept</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="content-box scroll-anim">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+                        <h2 class="section-title" style="margin: 0;">Global Employee Directory</h2>
+                        <div style="display: flex; gap: 10px;">
+
+                            <a href="404.html" class="main-btn" style="margin: 0; padding: 10px 20px;"><i
+                                    class="fa-solid fa-plus"></i> Add New</a>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Employee Name</th>
+                                    <th>Role / Department</th>
+                                    <th>Location</th>
+                                    <th>Pay Type</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>John Carter</strong><br><small
+                                            style="color: var(--text-muted);">john.c@company.com</small></td>
+                                    <td>Senior Developer <br><small
+                                            style="color: var(--text-muted);">Engineering</small></td>
+                                    <td>New York, USA</td>
+                                    <td>Salary ($120k)</td>
+                                    <td><span class="status success">Active</span></td>
+                                    <td><a href="404.html" class="action-btn">Edit</a></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Aisha Patel</strong><br><small
+                                            style="color: var(--text-muted);">aisha.p@company.com</small></td>
+                                    <td>Marketing Lead <br><small style="color: var(--text-muted);">Marketing</small>
+                                    </td>
+                                    <td>London, UK</td>
+                                    <td>Salary (£75k)</td>
+                                    <td><span class="status success">Active</span></td>
+                                    <td><a href="404.html" class="action-btn">Edit</a></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Michael Chen</strong><br><small
+                                            style="color: var(--text-muted);">m.chen@company.com</small></td>
+                                    <td>Sales Executive <br><small style="color: var(--text-muted);">Sales</small></td>
+                                    <td>Singapore</td>
+                                    <td>Hourly + Comm</td>
+                                    <td><span class="status pending">Onboarding</span></td>
+                                    <td><a href="404.html" class="action-btn">Edit</a></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Sarah Jenkins</strong><br><small
+                                            style="color: var(--text-muted);">sarah.j@company.com</small></td>
+                                    <td>Content Writer <br><small style="color: var(--text-muted);">Marketing</small>
+                                    </td>
+                                    <td>Remote (TX)</td>
+                                    <td>Contractor</td>
+                                    <td><span class="status success">Active</span></td>
+                                    <td><a href="404.html" class="action-btn">Edit</a></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>David Silva</strong><br><small
+                                            style="color: var(--text-muted);">d.silva@company.com</small></td>
+                                    <td>HR Manager <br><small style="color: var(--text-muted);">Operations</small></td>
+                                    <td>Berlin, DE</td>
+                                    <td>Salary (€85k)</td>
+                                    <td><span class="status failed">Terminated</span></td>
+                                    <td><a href="404.html" class="action-btn">Edit</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+            <!-- ========================================================
+                 3. RUN PAYROLL VIEW
+            ======================================================== -->
+            <div id="payroll-run-view" class="view-section">
+
+                 
+                <div class="alert-banner alert-warning scroll-anim">
+                    <i class="fa-solid fa-triangle-exclamation" style="font-size: 24px;"></i>
+                    <div>
+                        <h4 style="margin-bottom: 5px;">Action Required: Pending Approvals</h4>
+                        <p style="font-weight: 500; font-size: 14px;">You have 5 unapproved timesheets. Please review
+                            them before running the final payroll.</p>
+                    </div>
+                    <a href="404.html" class="action-btn"
+                        style="margin-left: auto; background: #b45309; color: #fff;">Review Timesheets</a>
+                </div>
+
+                <div class="two-col-grid">
+                    <section class="content-box scroll-anim">
+                        <h2 class="section-title">Current Cycle Summary (Oct 2026)</h2>
+                        <ul style="list-style: none; padding: 0;">
+                            <li
+                                style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid var(--border-color);">
+                                <span style="color: var(--text-muted); font-weight: 600;">Total Gross Payroll</span>
+                                <strong style="font-size: 16px;">$1,850,000.00</strong>
+                            </li>
+                            <li
+                                style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid var(--border-color);">
+                                <span style="color: var(--text-muted); font-weight: 600;">Employee Taxes</span>
+                                <strong style="font-size: 16px; color: #dc2626;">-$320,400.00</strong>
+                            </li>
+                            <li
+                                style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid var(--border-color);">
+                                <span style="color: var(--text-muted); font-weight: 600;">Benefits & Deductions</span>
+                                <strong style="font-size: 16px; color: #dc2626;">-$115,200.00</strong>
+                            </li>
+                            <li style="display: flex; justify-content: space-between; padding: 20px 0 5px 0;">
+                                <span style="color: var(--primary-blue); font-weight: 800; font-size: 18px;">Total Cash
+                                    Required</span>
+                                <strong style="font-size: 20px; color: #166534;">$1,414,400.00</strong>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <section class="content-box scroll-anim"
+                        style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                        <i class="fa-solid fa-money-check-dollar"
+                            style="font-size: 60px; color: var(--primary-teal); margin-bottom: 20px;"></i>
+                        <h3 style="font-size: 24px; color: var(--primary-blue); margin-bottom: 10px;">Ready to Pay?</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 30px; font-weight: 500;">Funds will be
+                            withdrawn on Oct 25, 2026. Employees will receive direct deposits by Oct 28.</p>
+                        <a href="404.html" class="main-btn" style="max-width: 250px;"><i
+                                class="fa-solid fa-paper-plane"></i> Submit Payroll</a>
+                    </section>
+                </div>
+
+                <section class="content-box scroll-anim">
+                    <h2 class="section-title">Employee Breakdown</h2>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Employee</th>
+                                    <th>Regular Pay</th>
+                                    <th>Bonus/Overtime</th>
+                                    <th>Taxes</th>
+                                    <th>Net Pay</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>John Carter</strong></td>
+                                    <td>$8,500.00</td>
+                                    <td>$0.00</td>
+                                    <td style="color: #dc2626;">-$1,250.00</td>
+                                    <td><strong style="color: #166534;">$7,250.00</strong></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Aisha Patel</strong></td>
+                                    <td>$6,200.00</td>
+                                    <td><span class="status info">+$500 (Bonus)</span></td>
+                                    <td style="color: #dc2626;">-$1,100.00</td>
+                                    <td><strong style="color: #166534;">$5,600.00</strong></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Michael Chen</strong></td>
+                                    <td>$3,500.00</td>
+                                    <td><span class="status info">+$1,200 (Comm)</span></td>
+                                    <td style="color: #dc2626;">-$950.00</td>
+                                    <td><strong style="color: #166534;">$3,750.00</strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+            <!-- ========================================================
+                 4. TAX & COMPLIANCE VIEW
+            ======================================================== -->
+            <div id="tax-view" class="view-section">
+
+                <div class="alert-banner alert-danger scroll-anim">
+                    <i class="fa-solid fa-shield-virus" style="font-size: 24px;"></i>
+                    <div>
+                        <h4 style="margin-bottom: 5px;">Compliance Alert: Action Needed</h4>
+                        <p style="font-weight: 500; font-size: 14px;">2 employees have missing I-9 forms. Please upload
+                            documents to avoid penalties.</p>
+                    </div>
+                </div>
+
+                <div class="three-col-grid">
+                    <section class="content-box scroll-anim">
+                        <h2 class="section-title">Upcoming Deadlines</h2>
+                        <div class="timeline" style="margin-top: 10px;">
+                            <div class="timeline-item">
+                                <h4>Oct 31, 2026</h4>
+                                <p>File Q3 Form 941 (Federal Tax)</p>
+                            </div>
+                            <div class="timeline-item">
+                                <h4>Nov 15, 2026</h4>
+                                <p>State Unemployment Insurance (SUI) Due</p>
+                            </div>
+                            <div class="timeline-item">
+                                <h4>Jan 31, 2027</h4>
+                                <p>W-2 / 1099 Distribution to Employees</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="content-box scroll-anim" style="grid-column: span 2;">
+                        <h2 class="section-title">Tax Document Library</h2>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Document Name</th>
+                                        <th>Period</th>
+                                        <th>Filing Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Form 941 (Q2)</strong></td>
+                                        <td>Q2 2026</td>
+                                        <td><span class="status success">Filed via API</span></td>
+                                        <td><a href="404.html" class="action-btn"><i class="fa-solid fa-download"></i>
+                                                PDF</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>State Withholding (NY)</strong></td>
+                                        <td>Sept 2026</td>
+                                        <td><span class="status success">Paid</span></td>
+                                        <td><a href="404.html" class="action-btn"><i class="fa-solid fa-download"></i>
+                                                PDF</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>W-2 Master Summary</strong></td>
+                                        <td>Year 2025</td>
+                                        <td><span class="status success">Completed</span></td>
+                                        <td><a href="404.html" class="action-btn"><i class="fa-solid fa-download"></i>
+                                                Zip</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Form 1099-NEC</strong></td>
+                                        <td>Year 2026</td>
+                                        <td><span class="status pending">Generating</span></td>
+                                        <td><a href="404.html" class="action-btn" style="opacity: 0.5;">Wait...</a></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- ========================================================
+                 5. SETTINGS VIEW
+            ======================================================== -->
+            <div id="settings-view" class="view-section">
+                <div class="two-col-grid">
+
+                     
+                    <section class="content-box scroll-anim">
+                        <h2 class="section-title">Company Profile</h2>
+                        <form id="companyProfileForm" novalidate>
+                             
+                            <div id="profileSuccessMsg"
+                                style="display: none; background: #dcfce7; color: #166534; padding: 15px; border-radius: 12px; margin-bottom: 20px; font-weight: bold; border: 1px solid #86efac; animation: fadeIn 0.3s ease;">
+                                <i class="fa-solid fa-circle-check"></i> Changes saved successfully!
+                            </div>
+
+                            <div class="input-group">
+                                <label>Legal Company Name *</label>
+                                <input type="text" id="companyName" value="Acme Global Solutions Inc.">
+                                <span class="error-msg"
+                                    style="color: #ef4444; font-size: 13px; font-weight: 700; display: none; margin-top: 8px;">Company
+                                    name is required.</span>
+                            </div>
+
+                            <div class="input-group">
+                                <label>Employer Identification Number (EIN)</label>
+                                <input type="text" value="XX-XXXX345" disabled
+                                    style="opacity: 0.7; cursor: not-allowed; background: #f1f5f9;">
+                                <small style="color: var(--text-muted); margin-top: 5px; display: block;">Contact
+                                    support to change EIN.</small>
+                            </div>
+
+                            <div class="input-group">
+                                <label>Headquarters Address *</label>
+                                <textarea id="companyAddress" rows="3"
+                                    style="width: 100%; padding: 15px; border: 2px solid var(--border-color); border-radius: 12px; outline: none; font-size: 15px; background: #f8fafc; transition: 0.3s;">120 Broadway, Suite 300&#10;New York, NY 10271</textarea>
+                                <span class="error-msg"
+                                    style="color: #ef4444; font-size: 13px; font-weight: 700; display: none; margin-top: 8px;">Address
+                                    cannot be empty.</span>
+                            </div>
+
+                            <button type="submit" class="main-btn" id="saveProfileBtn"><i
+                                    class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+                        </form>
+                    </section>
+
+                     
+                    <section class="content-box scroll-anim">
+                        <h2 class="section-title">Preferences & Integrations</h2>
+
+                        <div style="margin-bottom: 30px;">
+                            <h4 style="color: var(--primary-blue); margin-bottom: 15px;">Notifications</h4>
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">
+                                <div>
+                                    <strong style="display:block; margin-bottom:3px;">Payroll Reminders</strong>
+                                    <small style="color: var(--text-muted);">Get email alerts 3 days before payroll is
+                                        due.</small>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">
+                                <div>
+                                    <strong style="display:block; margin-bottom:3px;">Auto-File Taxes</strong>
+                                    <small style="color: var(--text-muted);">Let PayrollPro file forms
+                                        automatically.</small>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 style="color: var(--primary-blue); margin-bottom: 15px;">Accounting Integrations</h4>
+                            <div
+                                style="display: flex; align-items: center; gap: 15px; background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 15px;">
+                                <i class="fa-solid fa-file-invoice" style="font-size: 30px; color: #2ca01c;"></i>
+                                <div style="flex-grow: 1;">
+                                    <strong style="display:block;">QuickBooks Online</strong>
+                                    <small class="status success"
+                                        style="padding: 2px 8px; font-size: 9px; margin-top: 5px; display: inline-block;">Connected</small>
+                                </div>
+                                <a href="404.html" class="action-btn"
+                                    style="color: #dc2626; border-color: #fca5a5;">Disconnect</a>
+                            </div>
+                            <div
+                                style="display: flex; align-items: center; gap: 15px; background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid var(--border-color);">
+                                <i class="fa-solid fa-calculator" style="font-size: 30px; color: #13b5ea;"></i>
+                                <div style="flex-grow: 1;">
+                                    <strong style="display:block;">Xero Accounting</strong>
+                                    <small class="status info"
+                                        style="padding: 2px 8px; font-size: 9px; margin-top: 5px; display: inline-block; background: #e2e8f0; color: #475569;">Not
+                                        Connected</small>
+                                </div>
+                                <a href="404.html" class="action-btn">Connect</a>
+                            </div>
+                        </div>
+
+                    </section>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+     
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+ 
+            const emailValue = localStorage.getItem("UserMail");
+            const email = emailValue || "admin@payrollpro.com";
+            const extractedName = email.split("@")[0].replace('.', ' ');
+            const formattedName = extractedName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+
+            document.getElementById("displayEmail").textContent = email;
+            const welcomeEl = document.querySelector(".welcome-name");
+            if (welcomeEl) {
+                welcomeEl.innerHTML = `<span style="color: #94a3b8; font-weight: 500;">|</span> Welcome, <strong style="color: var(--primary-teal);">${formattedName}</strong> 👋`;
+            }
+
+ 
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const openSidebarBtn = document.getElementById('openSidebar');
+            const closeSidebarBtn = document.getElementById('closeSidebar');
+
+            function openSidebar() { sidebar.classList.add('active'); overlay.classList.add('active'); document.body.style.overflow = 'hidden'; }
+            function closeSidebar() { sidebar.classList.remove('active'); overlay.classList.remove('active'); document.body.style.overflow = 'auto'; }
+
+            openSidebarBtn.addEventListener('click', openSidebar);
+            closeSidebarBtn.addEventListener('click', closeSidebar);
+            overlay.addEventListener('click', closeSidebar);
+
+ 
+            const menuLinks = document.querySelectorAll('.sidebar-menu .menu-link');
+            const views = document.querySelectorAll('.view-section');
+            const pageTitle = document.getElementById('page-title');
+
+            menuLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    if (this.classList.contains('logout-btn')) return;
+                    e.preventDefault();
+                    if (this.classList.contains('active')) return;
+
+ 
+                    menuLinks.forEach(l => l.classList.remove('active'));
+                    views.forEach(v => v.classList.remove('active'));
+
+ 
+                    this.classList.add('active');
+                    const targetId = this.getAttribute('data-target');
+                    document.getElementById(targetId).classList.add('active');
+
+ 
+                    let titleText = this.innerText.trim();
+                    pageTitle.innerHTML = `${titleText} <span class="welcome-name"></span>`;
+
+                    if (targetId === 'dashboard-view') {
+                        pageTitle.querySelector('.welcome-name').innerHTML = `<span style="color: #94a3b8; font-weight: 500;">|</span> Welcome, <strong style="color: var(--primary-teal);">${formattedName}</strong> 👋`;
+                    }
+
+                    if (window.innerWidth <= 992) { closeSidebar(); }
+                    triggerAnimations(); // Trigger Scroll Animations on new view
+                });
+            });
+
+ 
+            document.getElementById('logoutBtn').addEventListener('click', function (e) {
+                e.preventDefault();
+                localStorage.removeItem("UserMail");
+ 
+                 window.location.href = 'login.html'; 
+            });
+
+ 
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) { entry.target.classList.add('show'); }
+                });
+            }, { threshold: 0.1 });
+
+            function triggerAnimations() {
+                const animElements = document.querySelectorAll('.scroll-anim');
+                animElements.forEach(el => {
+                    el.classList.remove('show');
+                    observer.observe(el);
+                });
+            }
+            triggerAnimations(); // Initial load trigger
+
+ 
+            const ctx = document.getElementById('payrollChart');
+            if (ctx) {
+                new Chart(ctx.getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+                        datasets: [{
+                            label: 'Total Payroll ($)',
+                            data: [1.2, 1.3, 1.35, 1.5, 1.7, 1.8],
+                            borderColor: '#0f172a',
+                            backgroundColor: 'rgba(45, 212, 191, 0.2)',
+                            borderWidth: 3, fill: true, tension: 0.4,
+                            pointBackgroundColor: '#2dd4bf', pointBorderColor: '#ffffff', pointBorderWidth: 2, pointRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { display: false }, tooltip: { callbacks: { label: function (context) { return '$' + context.parsed.y + 'M'; } } } },
+                        scales: { y: { grid: { color: '#e2e8f0' }, ticks: { callback: function (value) { return '$' + value + 'M'; } } }, x: { grid: { display: false } } }
+                    }
+                });
+            }
+        });
+
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const profileForm = document.getElementById('companyProfileForm');
+
+            if (profileForm) {
+                profileForm.addEventListener('submit', function (e) {
+                    e.preventDefault(); // Prevents page reload
+                    let isValid = true;
+
+                    const nameInput = document.getElementById('companyName');
+                    const addressInput = document.getElementById('companyAddress');
+                    const successMsg = document.getElementById('profileSuccessMsg');
+                    const saveBtn = document.getElementById('saveProfileBtn');
+
+ 
+                    const showError = (input, msg) => {
+                        input.style.borderColor = '#ef4444';
+                        input.style.backgroundColor = '#fef2f2';
+                        const errorSpan = input.parentElement.querySelector('.error-msg');
+                        errorSpan.textContent = msg;
+                        errorSpan.style.display = 'block';
+                        input.parentElement.style.animation = 'shakeInput 0.4s ease-in-out';
+                        setTimeout(() => { input.parentElement.style.animation = ''; }, 400);
+                    };
+
+ 
+                    const clearError = (input) => {
+                        input.style.borderColor = 'var(--border-color)';
+                        input.style.backgroundColor = '#f8fafc';
+                        const errorSpan = input.parentElement.querySelector('.error-msg');
+                        if (errorSpan) errorSpan.style.display = 'none';
+                    };
+
+ 
+                    clearError(nameInput);
+                    clearError(addressInput);
+                    successMsg.style.display = 'none';
+
+ 
+                    if (nameInput.value.trim().length < 3) {
+                        showError(nameInput, "Company name must be at least 3 characters.");
+                        isValid = false;
+                    }
+
+ 
+                    if (addressInput.value.trim() === "") {
+                        showError(addressInput, "Headquarters address cannot be empty.");
+                        isValid = false;
+                    }
+
+ 
+                    if (isValid) {
+ 
+                        const originalText = saveBtn.innerHTML;
+                        saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+                        saveBtn.disabled = true;
+
+ 
+                        setTimeout(() => {
+                            saveBtn.innerHTML = originalText;
+                            saveBtn.disabled = false;
+                            successMsg.style.display = 'block';
+
+ 
+                            setTimeout(() => {
+                                successMsg.style.display = 'none';
+                                window.location.href = '404.html'
+                            }, 3000);
+                        }, 1000);
+                    }
+                });
+
+ 
+                ['companyName', 'companyAddress'].forEach(id => {
+                    document.getElementById(id).addEventListener('input', function () {
+                        this.style.borderColor = 'var(--border-color)';
+                        this.style.backgroundColor = '#ffffff'; // White on focus
+                        this.parentElement.querySelector('.error-msg').style.display = 'none';
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
