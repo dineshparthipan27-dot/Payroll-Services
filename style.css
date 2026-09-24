@@ -479,12 +479,12 @@
 
 .card-text h4 {
     font-size: 1.2rem;
-    color: #1e293b;
+    color: #b8bbbf;
     margin-bottom: 5px;
 }
 
 .card-text p {
-    color: #64748b;
+    color: #c8cace;
     font-size: 0.95rem;
 }
 
@@ -796,14 +796,14 @@
     background-position: center;
     overflow: hidden;
     transition: all 0.7s cubic-bezier(0.25, 0.8, 0.25, 1);
-    cursor: pointer;
+    /* cursor: pointer; */
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
  
 .accordion-panel:hover, 
 .accordion-panel.active-panel {
-    flex: 4;  
+    flex: 5;  
     box-shadow: 0 20px 40px rgba(30, 58, 138, 0.3);
 }
 
@@ -866,7 +866,7 @@
 
 .accordion-panel:hover .panel-text-wrapper,
 .accordion-panel.active-panel .panel-text-wrapper {
-    height: 160px;  
+    height: 200px;  
 }
 
 .panel-desc {
@@ -1721,7 +1721,7 @@
  
 .popular-tag {
     position: absolute;
-    top: -15px; left: 50%; transform: translateX(-50%);
+    top: 4px; left: 50%; transform: translateX(-50%);
     background: linear-gradient(135deg, #2dd4bf, #0d9488);  
     color: #ffffff;  
     padding: 6px 20px;
